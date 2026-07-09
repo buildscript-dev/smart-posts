@@ -17,21 +17,27 @@ recommends.
 ## Demo flow
 
 1. **Loading** — "Building personalised Smart Posts for you!" checklist animates
-   through its 4 steps (long-press the screen to toggle the dark variant, which
-   also exists in the Figma LOADING section).
+   through its 4 steps (long-press toggles dark mode, whose variant also exists
+   in the Figma LOADING section).
 2. **Smart Post feed** — 3 posts, vertical reels-style swipe (designer note:
    *"Show 3 posts. User can scroll like reels"*). Header, tabs, page dots and
    bottom nav stay persistent; only the media area pages.
-3. **Product card** (post 1) — fades in from the bottom after 3 seconds and is
-   fully clickable (both behaviors specified in the designer's annotations).
+3. **Product card** (post 1) — fades in from the bottom after 3 seconds, fully
+   clickable (both from the designer's annotations), and randomly shows either
+   Figma variant: the trending message or the compact price card.
 4. **Edit Caption** — tap the caption block. Opens without the keyboard; tapping
    the text focuses it; **Save enables only when the text actually changes**
-   (dirty-state tracking, per the annotation "Enable Save button when a change
-   is made").
-5. **Quick share** — tap any platform icon → "Generating your sales link.."
-   modal over a blurred screen → simulated Instagram handoff → back to the feed.
-   The icon row is horizontally scrollable (annotation: "This list is
-   scrollable") and includes the extended platforms from Frame 1244833074.
+   (per the annotation "Enable Save button when a change is made"). Saved edits
+   replace the caption in the feed and in the shared text.
+5. **Quick share** — tap any platform icon → the Figma 4-stage loading sequence
+   ("Generating your sales link.." → clipboard → profile → social prep) → the
+   platform's **real app opens** (WhatsApp/Telegram get the caption prefilled);
+   if the app isn't installed, its website opens in the browser instead. The
+   icon row is horizontally scrollable (annotation: "This list is scrollable").
+6. **Everything else works** — Library / Communities / Share&Win top tabs,
+   bottom-nav Home dashboard, Search, Chats, Profile with a gallery that
+   collects real camera shots (camera button → system camera), a local
+   rule-based AI assistant, and a light/dark theme toggle in Profile.
 
 ## Structure
 

@@ -7,6 +7,7 @@ import '../../shared/bottom_nav.dart';
 import '../../shared/oriflame_header.dart';
 import '../../shared/tab_row.dart';
 import '../smart_post/smart_post_screen.dart';
+import '../../app/theme_controller.dart';
 
 const _steps = [
   'Preparing popular\ncontent for you',
@@ -27,7 +28,6 @@ class BuildingPostsScreen extends StatefulWidget {
 
 class _BuildingPostsScreenState extends State<BuildingPostsScreen> {
   int _done = 0; // steps fully checked; _done == index → that step spins
-  bool _dark = false;
   Timer? _timer;
 
   @override
@@ -57,17 +57,17 @@ class _BuildingPostsScreenState extends State<BuildingPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ink = _dark ? Colors.white : AppColors.ink;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = dark ? Colors.white : AppColors.ink;
     final allDone = _done >= _steps.length;
     return Scaffold(
-      backgroundColor: _dark ? AppColors.darkBg : Colors.white,
       body: GestureDetector(
-        onLongPress: () => setState(() => _dark = !_dark),
+        onLongPress: toggleTheme,
         behavior: HitTestBehavior.opaque,
         child: SafeArea(
           child: Column(
             children: [
-              if (!_dark) ...[
+              if (!dark) ...[
                 const OriflameHeader(showAssistant: false),
                 const SmartTabRow(),
               ],
@@ -87,7 +87,7 @@ class _BuildingPostsScreenState extends State<BuildingPostsScreen> {
                       : i == _done
                           ? _StepState.active
                           : _StepState.pending,
-                  dark: _dark,
+                  dark: dark,
                 ),
                 const SizedBox(height: 22),
               ],
@@ -101,7 +101,7 @@ class _BuildingPostsScreenState extends State<BuildingPostsScreen> {
                         color: ink)),
               ),
               const Spacer(flex: 3),
-              AppBottomNav(color: _dark ? Colors.white : AppColors.ink),
+              AppBottomNav(color: dark ? Colors.white : AppColors.ink),
             ],
           ),
         ),

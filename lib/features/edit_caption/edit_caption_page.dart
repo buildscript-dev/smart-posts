@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/theme.dart';
-import '../../data/mock_posts.dart';
-import '../../data/models.dart';
 
 /// Edit Caption page (02 Quick share frames): X · title · Save.
 /// Designer notes honored: opens WITHOUT keyboard; tapping the caption
 /// focuses it and opens the keyboard; Save enables only once text changes.
+/// Save pops with the edited text; the feed stores it per post.
 class EditCaptionPage extends StatefulWidget {
-  const EditCaptionPage({super.key, required this.post});
+  const EditCaptionPage({super.key, required this.initialText});
 
-  final SmartPost post;
+  final String initialText;
 
   @override
   State<EditCaptionPage> createState() => _EditCaptionPageState();
@@ -25,9 +24,7 @@ class _EditCaptionPageState extends State<EditCaptionPage> {
   @override
   void initState() {
     super.initState();
-    _original = '${widget.post.caption}\n\n'
-        'Use my referral code: $referralCode\n'
-        'Use my referral link: $referralLink';
+    _original = widget.initialText;
     _controller = TextEditingController(text: _original)
       ..addListener(() {
         final dirty = _controller.text != _original;
@@ -68,7 +65,7 @@ class _EditCaptionPageState extends State<EditCaptionPage> {
                     onPressed: _dirty
                         ? () {
                             HapticFeedback.mediumImpact();
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(_controller.text);
                           }
                         : null,
                     style: FilledButton.styleFrom(

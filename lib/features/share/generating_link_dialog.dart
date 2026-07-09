@@ -5,8 +5,15 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
 
-/// "Generating your sales link.." — white card over a blurred screen,
-/// Oriflame spinner mark + animated progress bar. Auto-dismisses.
+/// Figma "Loading animation" sequence — one card, four stages:
+/// sales link → clipboard → profile → social media prep.
+const _stages = [
+  'Generating your sales link..',
+  'Copying the caption to clipboard',
+  'Saving the content to your profile',
+  'Preparing the content for social media',
+];
+
 Future<void> showGeneratingLinkDialog(BuildContext context) {
   return showGeneralDialog(
     context: context,
@@ -26,21 +33,31 @@ class _GeneratingLinkDialog extends StatefulWidget {
 
 class _GeneratingLinkDialogState extends State<_GeneratingLinkDialog>
     with SingleTickerProviderStateMixin {
+  static const _stageMs = 1100;
+  int _stage = 0;
+  Timer? _timer;
   late final AnimationController _progress = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2200),
+    duration: const Duration(milliseconds: _stageMs),
   )..forward();
 
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 2400), () {
-      if (mounted) Navigator.of(context).pop();
+    _timer = Timer.periodic(const Duration(milliseconds: _stageMs), (t) {
+      if (_stage >= _stages.length - 1) {
+        t.cancel();
+        Navigator.of(context).pop();
+        return;
+      }
+      setState(() => _stage++);
+      _progress.forward(from: 0);
     });
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _progress.dispose();
     super.dispose();
   }
@@ -60,7 +77,6 @@ class _GeneratingLinkDialogState extends State<_GeneratingLinkDialog>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Oriflame swirl mark, approximated with a ring on mint circle.
               Container(
                 width: 64,
                 height: 64,
@@ -78,8 +94,14 @@ class _GeneratingLinkDialogState extends State<_GeneratingLinkDialog>
                 ),
               ),
               const SizedBox(height: 22),
-              const Text('Generating your sales link..',
-                  style: TextStyle(fontSize: 17, color: AppColors.greyText)),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Text(_stages[_stage],
+                    key: ValueKey(_stage),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontSize: 16, color: AppColors.greyText)),
+              ),
               const SizedBox(height: 18),
               AnimatedBuilder(
                 animation: _progress,
