@@ -70,43 +70,6 @@ class OriflameHeader extends StatelessWidget {
   }
 }
 
-/// Charcoal disc, white ring nudged bottom-left, thin swoosh arc top-left —
-/// the Oriflame swirl mark from the design.
-class _SwirlPainter extends CustomPainter {
-  const _SwirlPainter({required this.disc});
-
-  final Color disc;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final c = size.center(Offset.zero);
-    final onDisc = disc == Colors.white ? AppColors.darkBg : Colors.white;
-    canvas.drawCircle(c, size.width / 2, Paint()..color = disc);
-    // main ring, slightly off-center toward bottom-left
-    final ring = Paint()
-      ..color = onDisc
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.5;
-    canvas.drawCircle(c + const Offset(-1.5, 2), size.width / 2 - 8.5, ring);
-    // swoosh: thin arc floating at the top-left, outside the ring
-    final swoosh = Paint()
-      ..color = onDisc
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(
-        Rect.fromCircle(
-            center: c + const Offset(-1.5, 2), radius: size.width / 2 - 3.5),
-        3.55, // ~203°
-        1.25, // ~72° sweep toward the top
-        false,
-        swoosh);
-  }
-
-  @override
-  bool shouldRepaint(_SwirlPainter old) => old.disc != disc;
-}
-
 class _AssistantChip extends StatelessWidget {
   const _AssistantChip({this.onTap});
 
@@ -127,37 +90,15 @@ class _AssistantChip extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: 46,
-            height: 42,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // Filled charcoal disc with the Oriflame-style white swirl.
-                CustomPaint(
-                  size: const Size(40, 40),
-                  painter: _SwirlPainter(disc: dark ? Colors.white : ink),
-                ),
-                Positioned(
-                  top: -7,
-                  right: -8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 7, vertical: 2.5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7CBF8C),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Text('AI',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w700)),
-                  ),
-                ),
-              ],
-            ),
+          Container(
+            // faint halo keeps the charcoal disc visible on the dark theme
+            decoration: dark
+                ? const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle)
+                : null,
+            padding: dark ? const EdgeInsets.all(1.5) : EdgeInsets.zero,
+            child: Image.asset('assets/images/assistant_logo.png',
+                width: 44, height: 43, fit: BoxFit.contain),
           ),
           const SizedBox(height: 2),
           Text('Your Assistant', style: TextStyle(fontSize: 9, color: ink)),
