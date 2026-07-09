@@ -129,7 +129,7 @@ class MusicRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return FrostedPanel(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-      color: Colors.black.withValues(alpha: 0.20),
+      color: Colors.black.withValues(alpha: 0.14),
       child: Row(
         children: [
           const Icon(Icons.music_note, color: Colors.white, size: 18),
@@ -261,7 +261,7 @@ class _CaptionBlockState extends State<CaptionBlock> {
     return GestureDetector(
       onTap: widget.onEdit,
       child: FrostedPanel(
-        color: Colors.black.withValues(alpha: 0.24),
+        color: Colors.black.withValues(alpha: 0.16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

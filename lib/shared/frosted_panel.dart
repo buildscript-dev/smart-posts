@@ -12,7 +12,7 @@ class FrostedPanel extends StatelessWidget {
     this.padding = const EdgeInsets.all(12),
     this.radius = 10,
     this.color = AppColors.scrim,
-    this.blur = 2.5, // subtle — the photo must stay recognizable behind it
+    this.blur = 1.5, // subtle — the photo must stay recognizable behind it
   });
 
   final Widget child;
