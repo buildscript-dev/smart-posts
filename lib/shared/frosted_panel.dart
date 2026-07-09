@@ -12,19 +12,21 @@ class FrostedPanel extends StatelessWidget {
     this.padding = const EdgeInsets.all(12),
     this.radius = 10,
     this.color = AppColors.scrim,
+    this.blur = 2.5, // subtle — the photo must stay recognizable behind it
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double radius;
   final Color color;
+  final double blur;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(padding: padding, color: color, child: child),
       ),
     );
