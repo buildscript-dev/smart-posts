@@ -21,9 +21,13 @@ class SmartTabRow extends StatelessWidget {
             Text(
               _tabs[i],
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14.5,
                 fontWeight: FontWeight.w600,
-                color: i == activeIndex ? AppColors.brandGreen : AppColors.ink,
+                color: i == activeIndex
+                    ? AppColors.brandGreen
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : AppColors.ink,
               ),
             ),
         ],

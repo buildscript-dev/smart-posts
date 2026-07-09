@@ -48,14 +48,22 @@ const mockPosts = [
 ];
 
 const sharePlatforms = [
-  SharePlatform('Instagram', 'assets/icons/instagram.png'),
-  SharePlatform('Instagram Stories', 'assets/icons/instagram_story.png'),
-  SharePlatform('Facebook', 'assets/icons/facebook.png'),
-  SharePlatform('Facebook Stories', 'assets/icons/facebook_story.png'),
-  SharePlatform('Messenger', 'assets/icons/messenger.png'),
-  SharePlatform('TikTok', 'assets/icons/tiktok.png'),
+  SharePlatform(
+      'Instagram', 'assets/icons/instagram.png', 'https://www.instagram.com'),
+  SharePlatform('Instagram Stories', 'assets/icons/instagram_story.png',
+      'https://www.instagram.com'),
+  SharePlatform(
+      'Facebook', 'assets/icons/facebook.png', 'https://www.facebook.com'),
+  SharePlatform('Facebook Stories', 'assets/icons/facebook_story.png',
+      'https://www.facebook.com/stories'),
+  SharePlatform(
+      'Messenger', 'assets/icons/messenger.png', 'https://www.messenger.com'),
+  SharePlatform('TikTok', 'assets/icons/tiktok.png', 'https://www.tiktok.com'),
   // Extended row (Frame 1244833074): list is horizontally scrollable.
-  SharePlatform('WhatsApp', 'assets/icons/whatsapp.png'),
-  SharePlatform('WhatsApp Business', 'assets/icons/whatsapp_business.png'),
-  SharePlatform('Telegram', 'assets/icons/telegram.png'),
+  SharePlatform('WhatsApp', 'assets/icons/whatsapp.png', 'https://wa.me/',
+      textParam: 'text'),
+  SharePlatform('WhatsApp Business', 'assets/icons/whatsapp_business.png',
+      'https://www.whatsapp.com'),
+  SharePlatform('Telegram', 'assets/icons/telegram.png',
+      'https://t.me/share/url?url=https://oriflame.com', textParam: 'text'),
 ];

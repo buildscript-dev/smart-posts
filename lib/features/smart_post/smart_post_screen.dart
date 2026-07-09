@@ -10,7 +10,9 @@ import '../../shared/oriflame_header.dart';
 import '../../shared/tab_row.dart';
 import '../edit_caption/edit_caption_page.dart';
 import '../share/generating_link_dialog.dart';
-import '../share/instagram_handoff_screen.dart';
+import '../share/share_launcher.dart';
+import '../shell/camera_service.dart';
+import '../shell/shell.dart';
 import 'widgets/post_overlays.dart';
 
 /// Main feed. Chrome (header, tabs, bottom nav) stays put; only the media
@@ -35,13 +37,12 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
 
   Future<void> _share(SharePlatform platform) async {
     HapticFeedback.mediumImpact();
-    // "Generating your sales link.." modal, then hand off to the
-    // social app (simulated with a splash screen; no real backend).
+    // Figma loading sequence, then hand off to the platform's app
+    // (browser website when the app isn't installed).
     await showGeneratingLinkDialog(context);
-    if (!mounted) return;
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const InstagramHandoffScreen()),
-    );
+    final post = mockPosts[_page];
+    await launchPlatform(platform,
+        text: '${post.caption}\n\nUse my referral link: $referralLink');
   }
 
   void _editCaption() {
@@ -76,7 +77,13 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
             child: SafeArea(
               bottom: false,
               child: Column(
-                children: const [OriflameHeader(), SmartTabRow()],
+                children: [
+                  OriflameHeader(
+                    onAssistantTap: () => openAssistant(context),
+                    onCameraTap: () => captureToGallery(context),
+                  ),
+                  const SmartTabRow(),
+                ],
               ),
             ),
           ),
@@ -108,14 +115,18 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
                   child: Align(
                       // Design places the dots ~40% down the media area,
                       // just above the music row.
-                      alignment: const Alignment(0, -0.25),
+                      alignment: const Alignment(0, -0.15),
                       child: PageDots(index: _page, total: mockPosts.length)),
                 ),
-                const Positioned(
+                Positioned(
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: SafeArea(top: false, child: AppBottomNav()),
+                  child: SafeArea(
+                    top: false,
+                    child: AppBottomNav(
+                        onTap: (i) => goTab(context, tabFeed, i)),
+                  ),
                 ),
               ],
             ),
@@ -171,12 +182,9 @@ class _PostMediaState extends State<_PostMedia> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Full-height plates pre-baked from the design exports (clean band
-        // mirror-extended top/bottom), so the photo reads sharp edge to edge.
-        Image.asset(widget.post.imageAsset,
-            fit: BoxFit.cover, alignment: const Alignment(0, -0.3)),
+        Image.asset(widget.post.imageAsset, fit: BoxFit.cover),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 34, 92),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 92),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
