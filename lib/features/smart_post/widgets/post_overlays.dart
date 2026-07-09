@@ -84,7 +84,7 @@ class PickCounter extends StatelessWidget {
   }
 }
 
-/// Right-edge vertical page dots; active dot is brand green.
+/// Right-edge vertical page dots on a small dark blur pill (per Figma).
 class PageDots extends StatelessWidget {
   const PageDots({super.key, required this.index, required this.total});
 
@@ -93,23 +93,28 @@ class PageDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < total; i++)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 11,
-              height: 11,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: i == index ? AppColors.brandGreen : Colors.white,
+    return FrostedPanel(
+      radius: 18,
+      color: Colors.black.withValues(alpha: 0.28),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < total; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: i == index ? AppColors.brandGreen : Colors.white,
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

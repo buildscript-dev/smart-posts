@@ -29,3 +29,18 @@ ThemeData buildTheme() {
   // Jost: closest free match to the geometric single-story-'a' brand face.
   return base.copyWith(textTheme: GoogleFonts.jostTextTheme(base.textTheme));
 }
+
+ThemeData buildDarkTheme() {
+  final base = ThemeData(
+    useMaterial3: true,
+    scaffoldBackgroundColor: AppColors.darkBg,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.brandGreen,
+      primary: AppColors.brandGreen,
+      brightness: Brightness.dark,
+      surface: AppColors.darkBg,
+    ),
+  );
+  return base.copyWith(
+      textTheme: GoogleFonts.jostTextTheme(ThemeData.dark().textTheme));
+}

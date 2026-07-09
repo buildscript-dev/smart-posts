@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app/theme.dart';
+import 'app/theme_controller.dart';
 import 'features/loading/building_posts_screen.dart';
 
 void main() => runApp(const BrandieSmartPostsApp());
@@ -10,11 +11,16 @@ class BrandieSmartPostsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Oriflame Smart Posts',
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      home: const BuildingPostsScreen(),
+    return ValueListenableBuilder(
+      valueListenable: themeMode,
+      builder: (context, mode, _) => MaterialApp(
+        title: 'Oriflame Smart Posts',
+        debugShowCheckedModeBanner: false,
+        theme: buildTheme(),
+        darkTheme: buildDarkTheme(),
+        themeMode: mode,
+        home: const BuildingPostsScreen(),
+      ),
     );
   }
 }

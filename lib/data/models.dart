@@ -29,8 +29,19 @@ class SmartPost {
 }
 
 class SharePlatform {
-  const SharePlatform(this.name, this.iconAsset);
+  const SharePlatform(this.name, this.iconAsset, this.webUrl,
+      {this.textParam});
 
   final String name;
   final String iconAsset;
+  final String webUrl;
+
+  /// Query parameter that prefills the share text (wa.me / t.me support it).
+  final String? textParam;
+
+  String shareUrl(String? text) {
+    if (text == null || textParam == null) return webUrl;
+    final sep = webUrl.contains('?') ? '&' : '?';
+    return '$webUrl$sep$textParam=${Uri.encodeComponent(text)}';
+  }
 }
