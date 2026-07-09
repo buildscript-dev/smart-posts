@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,16 +41,16 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
     // Figma loading sequence, then hand off to the platform's app
     // (browser website when the app isn't installed).
     await showGeneratingLinkDialog(context);
-    final post = mockPosts[_page];
-    await launchPlatform(platform,
-        text: '${post.caption}\n\nUse my referral link: $referralLink');
+    await launchPlatform(platform, text: captionTextFor(_page));
   }
 
-  void _editCaption() {
+  Future<void> _editCaption() async {
     HapticFeedback.lightImpact();
-    Navigator.of(context).push(
+    final page = _page;
+    final edited = await Navigator.of(context).push<String>(
       PageRouteBuilder(
-        pageBuilder: (_, _, _) => EditCaptionPage(post: mockPosts[_page]),
+        pageBuilder: (_, _, _) =>
+            EditCaptionPage(initialText: captionTextFor(page)),
         transitionDuration: const Duration(milliseconds: 320),
         reverseTransitionDuration: const Duration(milliseconds: 260),
         transitionsBuilder: (_, anim, _, child) {
@@ -63,6 +64,11 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
         },
       ),
     );
+    if (edited != null && mounted) {
+      setState(() => editedCaptions[page] = edited);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Caption saved')));
+    }
   }
 
   @override
@@ -116,7 +122,10 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
                       // Design places the dots ~40% down the media area,
                       // just above the music row.
                       alignment: const Alignment(0, -0.15),
-                      child: PageDots(index: _page, total: mockPosts.length)),
+                      child: Transform.translate(
+                          offset: const Offset(0, -25),
+                          child: PageDots(
+                              index: _page, total: mockPosts.length))),
                 ),
                 Positioned(
                   left: 0,
@@ -158,6 +167,9 @@ class _PostMedia extends StatefulWidget {
 
 class _PostMediaState extends State<_PostMedia> {
   bool _showProduct = false;
+  // Random pick between the two Figma card variants — sometimes the
+  // trending message, sometimes the price.
+  final bool _trendingCard = Random().nextBool();
   Timer? _timer;
 
   @override
@@ -210,6 +222,7 @@ class _PostMediaState extends State<_PostMedia> {
                       alignment: Alignment.centerLeft,
                       child: ProductCard(
                         product: product,
+                        trending: _trendingCard,
                         // Whole box clickable → personal beauty store link.
                         onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -223,7 +236,10 @@ class _PostMediaState extends State<_PostMedia> {
               const SizedBox(height: 10),
               MusicRow(post: widget.post),
               const SizedBox(height: 10),
-              CaptionBlock(post: widget.post, onEdit: widget.onEditCaption),
+              CaptionBlock(
+                  post: widget.post,
+                  index: widget.index,
+                  onEdit: widget.onEditCaption),
               const SizedBox(height: 14),
               QuickShareRow(onShare: widget.onShare),
             ],

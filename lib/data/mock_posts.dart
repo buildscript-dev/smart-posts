@@ -6,6 +6,16 @@ import 'models.dart';
 const referralCode = 'UK-AMANDA3012';
 const referralLink = 'www.oriflame.com/giordani/amada3012';
 
+/// User-edited captions, keyed by post index (session-local, no backend).
+final editedCaptions = <int, String>{};
+
+/// Full caption text for a post: the edit or the generated default.
+String captionTextFor(int index) =>
+    editedCaptions[index] ??
+    '${mockPosts[index].caption}\n\n'
+        'Use my referral code: $referralCode\n'
+        'Use my referral link: $referralLink';
+
 const mockPosts = [
   SmartPost(
     imageAsset: 'assets/images/bg_post1.jpg',
