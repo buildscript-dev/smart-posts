@@ -6,6 +6,13 @@ import '../../../data/mock_posts.dart';
 import '../../../data/models.dart';
 import '../../../shared/frosted_panel.dart';
 
+/// Soft shadow so white overlay text stays readable on bright photos
+/// without darkening the panels (the photo must remain visible through them).
+const overlayTextShadows = [
+  Shadow(color: Colors.black54, blurRadius: 5),
+  Shadow(color: Colors.black38, blurRadius: 12),
+];
+
 /// Avatar + gradient "Ready to share" pill + community label.
 class PostHeaderRow extends StatelessWidget {
   const PostHeaderRow({super.key});
@@ -137,7 +144,10 @@ class MusicRow extends StatelessWidget {
           Expanded(
             child: Text.rich(
               TextSpan(
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    shadows: overlayTextShadows),
                 children: [
                   const TextSpan(text: 'Recommended:  '),
                   TextSpan(
@@ -257,7 +267,10 @@ class _CaptionBlockState extends State<CaptionBlock> {
   @override
   Widget build(BuildContext context) {
     const italic = TextStyle(
-        color: Colors.white70, fontSize: 13.5, fontStyle: FontStyle.italic);
+        color: Colors.white,
+        fontSize: 13.5,
+        fontStyle: FontStyle.italic,
+        shadows: overlayTextShadows);
     return GestureDetector(
       onTap: widget.onEdit,
       child: FrostedPanel(
@@ -286,7 +299,8 @@ class _CaptionBlockState extends State<CaptionBlock> {
                         color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5)),
+                        letterSpacing: 0.5,
+                        shadows: overlayTextShadows)),
                 const Spacer(),
                 const Icon(Icons.edit, color: Colors.white, size: 16),
                 const SizedBox(width: 5),
@@ -294,7 +308,8 @@ class _CaptionBlockState extends State<CaptionBlock> {
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
-                        fontWeight: FontWeight.w600)),
+                        fontWeight: FontWeight.w600,
+                        shadows: overlayTextShadows)),
               ],
             ),
             const SizedBox(height: 8),
@@ -318,7 +333,10 @@ class _CaptionBlockState extends State<CaptionBlock> {
                     child: Text.rich(
                       TextSpan(
                         style: const TextStyle(
-                            color: Colors.white, fontSize: 14, height: 1.35),
+                            color: Colors.white,
+                            fontSize: 14,
+                            height: 1.35,
+                            shadows: overlayTextShadows),
                         children: [
                           TextSpan(
                               text: _expanded
@@ -361,7 +379,8 @@ class QuickShareRow extends StatelessWidget {
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 15,
-                fontWeight: FontWeight.w600)),
+                fontWeight: FontWeight.w600,
+                shadows: overlayTextShadows)),
         const SizedBox(width: 12),
         Expanded(
           child: SizedBox(
