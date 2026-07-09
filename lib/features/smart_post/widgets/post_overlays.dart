@@ -41,7 +41,7 @@ class PostHeaderRow extends StatelessWidget {
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                       colors: [AppColors.pillPink, AppColors.pillPurple]),
@@ -136,7 +136,7 @@ class MusicRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return FrostedPanel(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-      color: Colors.black.withValues(alpha: 0.14),
+      color: Colors.black.withValues(alpha: 0.11),
       child: Row(
         children: [
           const Icon(Icons.music_note, color: Colors.white, size: 18),
@@ -274,7 +274,7 @@ class _CaptionBlockState extends State<CaptionBlock> {
     return GestureDetector(
       onTap: widget.onEdit,
       child: FrostedPanel(
-        color: Colors.black.withValues(alpha: 0.16),
+        color: Colors.black.withValues(alpha: 0.13),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -394,10 +394,8 @@ class QuickShareRow extends StatelessWidget {
                 final p = sharePlatforms[i];
                 return GestureDetector(
                   onTap: () => onShare(p),
-                  child: ClipOval(
-                    child: Image.asset(p.iconAsset,
-                        width: 46, height: 46, fit: BoxFit.cover),
-                  ),
+                  child: Image.asset(p.iconAsset,
+                      width: 46, height: 46, fit: BoxFit.contain),
                 );
               },
             ),

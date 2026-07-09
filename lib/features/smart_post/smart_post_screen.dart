@@ -82,7 +82,7 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
                     onAssistantTap: () => openAssistant(context),
                     onCameraTap: () => captureToGallery(context),
                   ),
-                  const SmartTabRow(),
+                  SmartTabRow(onTap: (i) => goTopTab(context, 0, i)),
                 ],
               ),
             ),
@@ -182,7 +182,9 @@ class _PostMediaState extends State<_PostMedia> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset(widget.post.imageAsset, fit: BoxFit.cover),
+        // Figma anchors the visible window to the photo's bottom edge.
+        Image.asset(widget.post.imageAsset,
+            fit: BoxFit.cover, alignment: Alignment.bottomCenter),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 92),
           child: Column(
