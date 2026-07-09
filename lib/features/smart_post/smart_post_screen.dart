@@ -54,11 +54,15 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
         transitionDuration: const Duration(milliseconds: 320),
         reverseTransitionDuration: const Duration(milliseconds: 260),
         transitionsBuilder: (_, anim, _, child) {
-          final curved =
-              CurvedAnimation(parent: anim, curve: Curves.easeOutCubic);
+          final curved = CurvedAnimation(
+            parent: anim,
+            curve: Curves.easeOutCubic,
+          );
           return SlideTransition(
-            position: Tween(begin: const Offset(0, 1), end: Offset.zero)
-                .animate(curved),
+            position: Tween(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(curved),
             child: FadeTransition(opacity: curved, child: child),
           );
         },
@@ -66,8 +70,9 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
     );
     if (edited != null && mounted) {
       setState(() => editedCaptions[page] = edited);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Caption saved')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Caption saved')));
     }
   }
 
@@ -119,13 +124,14 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
                   top: 0,
                   bottom: 0,
                   child: Align(
-                      // Design places the dots ~40% down the media area,
-                      // just above the music row.
-                      alignment: const Alignment(0, -0.15),
-                      child: Transform.translate(
-                          offset: const Offset(0, -25),
-                          child: PageDots(
-                              index: _page, total: mockPosts.length))),
+                    // Design places the dots ~40% down the media area,
+                    // just above the music row.
+                    alignment: const Alignment(0, -0.15),
+                    child: Transform.translate(
+                      offset: const Offset(0, -25),
+                      child: PageDots(index: _page, total: mockPosts.length),
+                    ),
+                  ),
                 ),
                 Positioned(
                   left: 0,
@@ -134,7 +140,8 @@ class _SmartPostScreenState extends State<SmartPostScreen> {
                   child: SafeArea(
                     top: false,
                     child: AppBottomNav(
-                        onTap: (i) => goTab(context, tabFeed, i)),
+                      onTap: (i) => goTab(context, tabFeed, i),
+                    ),
                   ),
                 ),
               ],
@@ -177,8 +184,10 @@ class _PostMediaState extends State<_PostMedia> {
     super.initState();
     // Designer note: product info fades in from the bottom after 3 seconds.
     if (widget.post.product != null) {
-      _timer = Timer(const Duration(seconds: 3),
-          () => setState(() => _showProduct = true));
+      _timer = Timer(
+        const Duration(seconds: 3),
+        () => setState(() => _showProduct = true),
+      );
     }
   }
 
@@ -195,8 +204,11 @@ class _PostMediaState extends State<_PostMedia> {
       fit: StackFit.expand,
       children: [
         // Figma anchors the visible window to the photo's bottom edge.
-        Image.asset(widget.post.imageAsset,
-            fit: BoxFit.cover, alignment: Alignment.bottomCenter),
+        Image.asset(
+          widget.post.imageAsset,
+          fit: BoxFit.cover,
+          alignment: Alignment.bottomCenter,
+        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 92),
           child: Column(
@@ -220,14 +232,23 @@ class _PostMediaState extends State<_PostMedia> {
                     duration: const Duration(milliseconds: 500),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: ProductCard(
-                        product: product,
-                        trending: _trendingCard,
-                        // Whole box clickable → personal beauty store link.
-                        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Opening your personal beauty store…')),
+                      // keep the card clear of the page-dot indicator
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.sizeOf(context).width - 116,
+                        ),
+                        child: ProductCard(
+                          product: product,
+                          trending: _trendingCard,
+                          // Whole box clickable → personal beauty store link.
+                          onTap: () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Opening your personal beauty store…',
+                                  ),
+                                ),
+                              ),
                         ),
                       ),
                     ),
@@ -237,9 +258,10 @@ class _PostMediaState extends State<_PostMedia> {
               MusicRow(post: widget.post),
               const SizedBox(height: 10),
               CaptionBlock(
-                  post: widget.post,
-                  index: widget.index,
-                  onEdit: widget.onEditCaption),
+                post: widget.post,
+                index: widget.index,
+                onEdit: widget.onEditCaption,
+              ),
               const SizedBox(height: 14),
               QuickShareRow(onShare: widget.onShare),
             ],
