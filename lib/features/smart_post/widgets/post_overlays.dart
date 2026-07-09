@@ -102,7 +102,8 @@ class PageDots extends StatelessWidget {
   Widget build(BuildContext context) {
     return FrostedPanel(
       radius: 18,
-      color: Colors.black.withValues(alpha: 0.28),
+      // same treatment as the caption/music panels
+      color: Colors.black.withValues(alpha: 0.13),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -167,14 +168,34 @@ class MusicRow extends StatelessWidget {
   }
 }
 
-/// Product card ("Girodani Gold Lipstick · trending · 30% off").
+/// Product card, two design variants (both exist in the Figma frames):
+/// trending — wider, "📈 Trending right now and on sale" + discount badge;
+/// price    — compact, "$14.99" + discount badge, no trending line.
 /// Designer note: fades in from bottom after 3 s; whole box is clickable →
 /// personal beauty store link.
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key, required this.product, required this.onTap});
+  const ProductCard(
+      {super.key,
+      required this.product,
+      required this.onTap,
+      this.trending = true});
 
   final Product product;
   final VoidCallback onTap;
+  final bool trending;
+
+  Widget _badge() => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.deepGreen,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(product.discount,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700)),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +222,7 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('${product.name}  ${product.price}',
+                  Text(product.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -209,35 +230,37 @@ class ProductCard extends StatelessWidget {
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700)),
                   const SizedBox(height: 4),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.trending_up,
-                          color: Colors.white, size: 15),
-                      const SizedBox(width: 4),
-                      const Flexible(
-                        child: Text('Trending right now and on sale',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 11.5)),
-                      ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.deepGreen,
-                          borderRadius: BorderRadius.circular(4),
+                  if (trending)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.trending_up,
+                            color: Colors.white, size: 15),
+                        const SizedBox(width: 4),
+                        const Flexible(
+                          child: Text('Trending right now and on sale',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 11.5)),
                         ),
-                        child: Text(product.discount,
+                        const SizedBox(width: 6),
+                        _badge(),
+                      ],
+                    )
+                  else
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(product.price,
                             style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w700)),
-                      ),
-                    ],
-                  ),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600)),
+                        const SizedBox(width: 8),
+                        _badge(),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -252,9 +275,14 @@ class ProductCard extends StatelessWidget {
 /// Caption block: "CAPTION SUGGESTION / Edit Caption" header, collapsible
 /// caption text, referral code + link. Tap → edit caption page.
 class CaptionBlock extends StatefulWidget {
-  const CaptionBlock({super.key, required this.post, required this.onEdit});
+  const CaptionBlock(
+      {super.key,
+      required this.post,
+      required this.index,
+      required this.onEdit});
 
   final SmartPost post;
+  final int index;
   final VoidCallback onEdit;
 
   @override
@@ -271,6 +299,10 @@ class _CaptionBlockState extends State<CaptionBlock> {
         fontSize: 13.5,
         fontStyle: FontStyle.italic,
         shadows: overlayTextShadows);
+    // Edited caption replaces the whole block body (it already contains
+    // the referral lines); otherwise show the generated caption + referral.
+    final edited = editedCaptions[widget.index];
+    final body = edited ?? widget.post.caption;
     return GestureDetector(
       onTap: widget.onEdit,
       child: FrostedPanel(
@@ -338,10 +370,11 @@ class _CaptionBlockState extends State<CaptionBlock> {
                             height: 1.35,
                             shadows: overlayTextShadows),
                         children: [
+                          // collapsed: ~2 lines with "see more" inline
                           TextSpan(
                               text: _expanded
-                                  ? widget.post.caption
-                                  : '${widget.post.caption.substring(0, 96)}... '),
+                                  ? body
+                                  : '${body.substring(0, body.length < 64 ? body.length : 64)}... '),
                           if (!_expanded)
                             const TextSpan(
                                 text: 'see more',
@@ -355,9 +388,17 @@ class _CaptionBlockState extends State<CaptionBlock> {
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            const Text('Use my referral code: $referralCode', style: italic),
-            const Text('Use my referral link: $referralLink', style: italic),
+            if (edited == null) ...[
+              const SizedBox(height: 10),
+              Text('Use my referral code: $referralCode',
+                  maxLines: _expanded ? null : 1,
+                  overflow: _expanded ? null : TextOverflow.ellipsis,
+                  style: italic),
+              Text('Use my referral link: $referralLink',
+                  maxLines: _expanded ? null : 1,
+                  overflow: _expanded ? null : TextOverflow.ellipsis,
+                  style: italic),
+            ],
           ],
         ),
       ),
