@@ -17,6 +17,10 @@ class GalleryStore {
     return photo.copy('${dir.path}/$name');
   }
 
+  static Future<void> delete(File photo) async {
+    if (await photo.exists()) await photo.delete();
+  }
+
   static Future<List<File>> list() async {
     final dir = await _dir();
     final files = await dir

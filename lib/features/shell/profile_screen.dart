@@ -30,6 +30,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) setState(() => _shots = shots);
   }
 
+  Future<void> _confirmDelete(File shot) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete photo?'),
+        content: const Text('This removes it from your in-app gallery.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) {
+      await GalleryStore.delete(shot);
+      await _load();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
@@ -118,9 +145,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisSpacing: 6,
             ),
             itemCount: tiles.length,
+            // Camera shots (the first _shots.length tiles) can be deleted;
+            // the seeded post images cannot.
             itemBuilder: (context, i) => GestureDetector(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => _PhotoViewer(image: tiles[i]))),
+                  builder: (_) => _PhotoViewer(
+                      image: tiles[i],
+                      onDelete: i < _shots.length
+                          ? () => _confirmDelete(_shots[i])
+                          : null))),
+              onLongPress:
+                  i < _shots.length ? () => _confirmDelete(_shots[i]) : null,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image(image: tiles[i], fit: BoxFit.cover),
@@ -134,19 +169,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class _PhotoViewer extends StatelessWidget {
-  const _PhotoViewer({required this.image});
+  const _PhotoViewer({required this.image, this.onDelete});
 
   final ImageProvider image;
+
+  /// Non-null only for deletable camera shots.
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTap: () => Navigator.of(context).pop(),
-        child: Center(
-          child: InteractiveViewer(child: Image(image: image)),
-        ),
+      body: Stack(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Center(
+              child: InteractiveViewer(child: Image(image: image)),
+            ),
+          ),
+          if (onDelete != null)
+            Positioned(
+              top: 12,
+              right: 12,
+              child: SafeArea(
+                child: IconButton(
+                  icon: const Icon(Icons.delete_outline_rounded,
+                      color: Colors.white, size: 28),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onDelete!();
+                  },
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
