@@ -1,4 +1,4 @@
-# Oriflame Smart Posts — Brandie Flutter Assignment
+# Oriflame Smart Posts — Flutter Developer Assignment
 
 A single-page Flutter implementation of the **Quick Share / Smart Posts** feature
 from the provided Figma design: an AI-generated, ready-to-share product post feed
